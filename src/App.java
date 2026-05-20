@@ -26,20 +26,15 @@ public class App {
                     String matricula;
                     System.out.println("==================================");
                     System.out.println("Cadastro Funcionário");
+                    
                     nome = validaInputNome();
                     if (nome == null){
                         System.out.println("Cancelando Cadastro...");
                         continue;
                     }
-
-
-                    do { 
-                        System.out.println("Digite o número de matrícula | campo vazio para cancelar");
-                        matricula = validaInputMatricula(input.nextLine());
-                        
-                    } while (matricula.equals("-1"));
                     
-                    if (nome.equals(" ")){
+                    matricula = validaInputMatricula();
+                    if (matricula==null){
                         System.out.println("Cancelando Cadastro...");
                         continue;
                     }
@@ -107,6 +102,12 @@ public class App {
 
     }
 
+    /**
+     * 1. Se vazio retorna null (cancela operação)
+     * 2. valida se é nome completo (possui espaço)
+     * 3. Valida se possui digitos
+     * @return nome (lowercase) para compação em banco de dados ArrayList
+     */
     private static String validaInputNome(){
         while (true) {
             System.out.println("Digite o nome completo | 'Enter' para cancelar");
@@ -131,7 +132,7 @@ public class App {
                 continue;
             }
 
-            return nome;
+            return nome.toLowerCase();
         }
         //  return "-1" se invalido
         //  return " " para cancerlar loop
@@ -161,41 +162,48 @@ public class App {
         // } while(true);
     }
 
-    // private static String validaInputNome(String nome){
-    //     //  return "-1" se invalido
-    //     //  return " " para cancerlar loop
-    //     //  return nome se validado
-    //     if (nome.equals(" ")){
-    //         System.out.println("ESPAÇO");
-    //         return " ";
-    //     }
-    //     nome = nome.trim();
-    //     // TODO validar se não tem número
-        
-    //     if (! nome.contains(" ")){
-    //         System.out.println("Inválido. Necessário preencher nome Completo");
-    //         return "-1";
-    //     }else{
-    //         return nome;
-    //     }
-    // }
+    /**
+     * 1. Se vazio retorna null (cancela operação)
+     * 2. Valida se a matrícula já foi cadastrada
+     * @return matricula
+     */
     
-    private static String validaInputMatricula(String matricula){
+    private static String validaInputMatricula(){
+        while (true) {
+            System.out.println("Digite o número da Matrícula | 'Enter' para cancelar");
+            String matricula = input.nextLine().trim(); 
+
+            if (matricula.isEmpty()){
+                return null;
+            }
+            boolean repetido = false;
+            for (Funcionario funcionario : listaFuncionario){
+                if (funcionario.getMatricula().equals(matricula)){
+                    repetido = true;
+                    break;
+                }
+            }
+            if (repetido){
+                System.out.println("ERRO. Matrícula já cadastrada");
+                continue;
+            }
+            return matricula;  
+        }
         //  return "-1" se invalido
         //  return " " para cancerlar loop
         //  return matricula se validado
-        if (matricula.equals(" ")){
-            return " ";
-        }
-        for (Funcionario funcionario : listaFuncionario){
-            if(funcionario.getMatricula().equals(matricula)){
-                System.out.println("Inválido. Matrícula já utilizada");
-                return "-1";
-            }
-        }
-        // TODO validacao se matricula é unico
+        // if (matricula.equals(" ")){
+        //     return " ";
+        // }
+        // for (Funcionario funcionario : listaFuncionario){
+        //     if(funcionario.getMatricula().equals(matricula)){
+        //         System.out.println("Inválido. Matrícula já utilizada");
+        //         return "-1";
+        //     }
+        // }
+        // // TODO validacao se matricula é unico
 
-        return matricula;
+        // return matricula;
     }
     
     private static void mostraFolhaPgto(){
