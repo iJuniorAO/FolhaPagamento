@@ -13,7 +13,6 @@ public class App {
         do { 
             mostrarTelaLogin();
             sair = validaOpcaoTela1(input.nextLine());
-            // sair = 1; // TODO bypass das opções
 
             switch (sair) {
                 case 0:
@@ -48,9 +47,36 @@ public class App {
                         continue;
                     }
 
-                    Funcionario NovoFuncionario = new Funcionario(matricula, nome);
-                    listaFuncionario.add(NovoFuncionario);
+                    switch (sair) {
+                        case 1:
+                            Funcionario FuncionarioBase = new Funcionario(matricula, nome);
+                            listaFuncionario.add(FuncionarioBase);
+                            break;
+                        case 2:
+                            System.out.println("Digite o valor total vendido: | campo vazio para cancelar");
+                            double valorVendas = input.nextDouble();
+                            
+                            System.out.println("Digite a porcentagem de comissão (0~100): | campo vazio para cancelar");
+                            double comissao = input.nextDouble();
+                            comissao /= 100;
+                            
+                            FuncionarioVendedor FuncionarioVendas = new FuncionarioVendedor(matricula, nome, valorVendas, comissao);
+                            listaFuncionario.add(FuncionarioVendas);
+                            break;
+                        case 3:
+                            System.out.println("Digite o unitário da peça: | campo vazio para cancelar");
+                            double valorUnitario = input.nextDouble();
+                            
+                            System.out.println("Digite qtd de peças produzidas: | campo vazio para cancelar");
+                            int quantidadePecaProduzida = input.nextInt();
+                            
+                            FuncionarioOperacao FuncionarioOperacao = new FuncionarioOperacao(matricula, nome, quantidadePecaProduzida, valorUnitario);
+                            
+                            listaFuncionario.add(FuncionarioOperacao);
 
+                            break;
+                            
+                    }
                     break;
                 case 4:
                     System.out.println("Folha pgto...");
