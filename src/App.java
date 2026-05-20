@@ -44,20 +44,23 @@ public class App {
                             Funcionario FuncionarioBase = new Funcionario(matricula, nome);
                             listaFuncionario.add(FuncionarioBase);
                             break;
+
                         case 2:
                             double valorVendas = validaInputMoeda("Digite o valor total das Vendas: ");
                             if (Double.isNaN(valorVendas)){
                                 System.out.println("Cancelando Cadastro...");
                                 continue;
                             }
-
-                            System.out.println("Digite a porcentagem de comissão (0~100): | campo vazio para cancelar");
-                            double comissao = input.nextDouble();
-                            comissao /= 100;
                             
+                            float comissao = validaInputPorcentagem();
+                            if (Float.isNaN(comissao)){
+                                System.out.println("Cancelando Cadastro...");
+                                continue;    
+                            }                           
                             FuncionarioVendedor FuncionarioVendas = new FuncionarioVendedor(matricula, nome, valorVendas, comissao);
                             listaFuncionario.add(FuncionarioVendas);
                             break;
+                        
                         case 3:
                             double valorUnitario = validaInputMoeda("Digite o unitário da peça:");
                             if (Double.isNaN(valorUnitario)){
@@ -69,7 +72,6 @@ public class App {
                             int quantidadePecaProduzida = input.nextInt();
                             
                             FuncionarioOperacao FuncionarioOperacao = new FuncionarioOperacao(matricula, nome, quantidadePecaProduzida, valorUnitario);
-                            
                             listaFuncionario.add(FuncionarioOperacao);
 
                             break;
@@ -140,32 +142,6 @@ public class App {
 
             return nome.toLowerCase();
         }
-        //  return "-1" se invalido
-        //  return " " para cancerlar loop
-        //  return nome se validado
-        // do { 
-        //     boolean erro=false;
-        //     System.out.println("Digite o nome completo | campo vazio para cancelar");
-        //     String nome = input.nextLine();
-            
-        //     if (nome.equals(" ")){
-        //         return " ";
-        //     }
-        //     if (! nome.contains(" ")){
-        //         System.out.println("Inválido. Necessário preencher nome Completo");
-        //         erro=true;
-        //     }
-        //     nome = nome.trim();
-        //     for (char c : nome.toCharArray()){
-        //         if (Character.isDigit(c)){
-        //             System.out.println("Inválido. Nome não pode conter número");
-        //             erro = true;
-        //             break;
-        //         }
-        //     }
-        //     if (erro==false)
-        //         return nome;
-        // } while(true);
     }
 
     /**
@@ -199,7 +175,8 @@ public class App {
 
     /** 
      * 1. Se vazio retorna null (cancela operação)
-     * 2. Valida se pode ser convertido para double
+     * 2. Valida se pode ser convertido para double (possui letras/caracteres especiais)
+     * 3. Valida se é negativo
      * @param mensagem será passado no print Inicial
      * @return moeda
      */
@@ -214,6 +191,10 @@ public class App {
 
             try {
                 double numeroValido = Double.parseDouble(moeda);
+                if (numeroValido<0){
+                    System.out.println("ERRO. Valor negativo");
+                    continue;
+                }
                 return numeroValido;
             }
             catch(java.lang.NumberFormatException e) {
@@ -225,7 +206,51 @@ public class App {
             
         }
     }
-    
+
+    /**
+     * 1. Se vazio retorna null (cancela operação)
+     * 2. Valida se pode ser convertido para float (possui letras/caracteres especiais)
+     * 3. Valida se é negativo
+     * @return numeroValido/100
+     */
+    private static float validaInputPorcentagem(){
+        while (true) {
+            System.out.println("Digite a porcentagem de comissão (0~100) | 'Enter' para cancelar");
+            String porcentagemValida = input.nextLine().trim();
+
+            if (porcentagemValida.isEmpty()){
+                return Float.NaN;
+            }
+
+            try {
+                Float numeroValido = Float.parseFloat(porcentagemValida);
+
+                if (numeroValido<0){
+                    System.out.println("ERRO. Não pode existir comissão negativa");
+                    continue;
+                }
+                return numeroValido/100;
+            }
+            catch(java.lang.NumberFormatException e) {
+                System.out.println("Erro. Digite somente números");
+            }
+            catch (Exception e) {
+                System.out.println("Erro Inesperado. Tente novamente: "+e);
+            }
+            
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
     private static void mostraFolhaPgto(){
         // se estiver vazio mostrar zerado
 
