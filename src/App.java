@@ -26,16 +26,13 @@ public class App {
                     String matricula;
                     System.out.println("==================================");
                     System.out.println("Cadastro Funcionário");
-                    do { 
-                        System.out.println("Digite o nome completo | campo vazio para cancelar");
-                        
-                        nome = validaInputNome(input.nextLine());
-                    } while (nome.equals("-1"));
-
-                    if (nome.equals(" ")){
+                    nome = validaInputNome();
+                    if (nome == null){
                         System.out.println("Cancelando Cadastro...");
                         continue;
                     }
+
+
                     do { 
                         System.out.println("Digite o número de matrícula | campo vazio para cancelar");
                         matricula = validaInputMatricula(input.nextLine());
@@ -110,24 +107,78 @@ public class App {
 
     }
 
-    private static String validaInputNome(String nome){
+    private static String validaInputNome(){
+        while (true) {
+            System.out.println("Digite o nome completo | 'Enter' para cancelar");
+            String nome = input.nextLine().trim();
+
+            if (nome.isEmpty()){
+                return null;
+            }
+            if (!nome.contains(" ")){
+                System.out.println("ERRO! Necessário preencher nome Completo");
+                continue;
+            }
+            boolean temNumero = false;
+            for (char c : nome.toCharArray()){
+                if (Character.isDigit(c)){
+                    temNumero = true;
+                    break;
+                }
+            }
+            if (temNumero){
+                System.out.println("ERRO! Não pode haver números");
+                continue;
+            }
+
+            return nome;
+        }
         //  return "-1" se invalido
         //  return " " para cancerlar loop
         //  return nome se validado
-        if (nome.equals(" ")){
-            System.out.println("ESPAÇO");
-            return " ";
-        }
-        nome = nome.trim();
-        // TODO validar se não tem número
-        
-        if (! nome.contains(" ")){
-            System.out.println("Inválido. Necessário preencher nome Completo");
-            return "-1";
-        }else{
-            return nome;
-        }
+        // do { 
+        //     boolean erro=false;
+        //     System.out.println("Digite o nome completo | campo vazio para cancelar");
+        //     String nome = input.nextLine();
+            
+        //     if (nome.equals(" ")){
+        //         return " ";
+        //     }
+        //     if (! nome.contains(" ")){
+        //         System.out.println("Inválido. Necessário preencher nome Completo");
+        //         erro=true;
+        //     }
+        //     nome = nome.trim();
+        //     for (char c : nome.toCharArray()){
+        //         if (Character.isDigit(c)){
+        //             System.out.println("Inválido. Nome não pode conter número");
+        //             erro = true;
+        //             break;
+        //         }
+        //     }
+        //     if (erro==false)
+        //         return nome;
+        // } while(true);
     }
+
+    // private static String validaInputNome(String nome){
+    //     //  return "-1" se invalido
+    //     //  return " " para cancerlar loop
+    //     //  return nome se validado
+    //     if (nome.equals(" ")){
+    //         System.out.println("ESPAÇO");
+    //         return " ";
+    //     }
+    //     nome = nome.trim();
+    //     // TODO validar se não tem número
+        
+    //     if (! nome.contains(" ")){
+    //         System.out.println("Inválido. Necessário preencher nome Completo");
+    //         return "-1";
+    //     }else{
+    //         return nome;
+    //     }
+    // }
     
     private static String validaInputMatricula(String matricula){
         //  return "-1" se invalido
