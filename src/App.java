@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class App {
 
-    static ArrayList<String> listaFuncionario = new ArrayList<>();
+    static ArrayList<Funcionario> listaFuncionario = new ArrayList<>();
     static int sair = -1;
     static Scanner input = new Scanner(System.in);
 
@@ -27,20 +27,31 @@ public class App {
                     String matricula;
                     System.out.println("==================================");
                     System.out.println("Cadastro Funcionário");
-                    System.out.println("Digite o nome completo | campo vazio para cancelar");
-                    
-                    nome = validaInputNome();
-                    
-                    System.out.println("Digite o número de matrícula | campo vazio para cancelar");
-                    matricula = validaInputMatricula();
+                    do { 
+                        System.out.println("Digite o nome completo | campo vazio para cancelar");
+                        
+                        nome = validaInputNome(input.nextLine());
+                    } while (nome.equals("-1"));
 
-                    if ((nome!=" ") && (matricula!=" ")){
-                        Funcionario funcionarioCadastrado = new Funcionario(matricula, nome);
-                        listaFuncionario.add(matricula);
+                    if (nome.equals(" ")){
+                        System.out.println("Cancelando Cadastro...");
+                        continue;
+                    }
+                    do { 
+                        System.out.println("Digite o número de matrícula | campo vazio para cancelar");
+                        matricula = validaInputMatricula(input.nextLine());
+                        
+                    } while (matricula.equals("-1"));
+                    
+                    if (nome.equals(" ")){
+                        System.out.println("Cancelando Cadastro...");
+                        continue;
                     }
 
-                    cadastraFuncionario(sair);
-                break;
+                    Funcionario NovoFuncionario = new Funcionario(matricula, nome);
+                    listaFuncionario.add(NovoFuncionario);
+
+                    break;
                 case 4:
                     System.out.println("Folha pgto...");
                     mostraFolhaPgto();
@@ -58,12 +69,12 @@ public class App {
         try {
             int numeroValido = Integer.parseInt(textoInput);
             if ((numeroValido<0) || (numeroValido>=5)){
-                System.out.println("Opção Inválida. Digite somente números de 0 a 4");
+                System.out.println("Opção inválida. Digite somente números de 0 a 4");
                 return -1;
             }
             return numeroValido;
         }catch(java.lang.NumberFormatException e) {
-            System.out.println("Opção Inválida. Digite somente números");
+            System.out.println("Erro. Digite somente números");
             return -1;
 
         } catch (Exception e) {
@@ -73,89 +84,85 @@ public class App {
 
     }
 
-    private static String validaInputNome(){
-        do { 
-            String nome = input.nextLine();
-            
-            if (nome.equals(" ")){
-                return nome;
-            }
-            
-            nome = nome.trim();
-            
-            // validar se não tem número
-
-            if (! nome.contains(" ")){
-                System.out.println("Inválido. Necessário preencher nome Completo");
-            }else{
-                return nome;
-            }
-        } while (true);
-    }
-    
-    private static String validaInputMatricula(){
-        do { 
-           String matricula = input.nextLine();
-            if (matricula.equals(" ")){
-                // TODO validacao se matricula é unico
-                return matricula;
-            }else{
-                return matricula;
-            }
-        } while (true);
-    }
-    
-    private static void cadastraFuncionario(int tipoFuncionario){
-        String nome;
-        String matricula;
-        System.out.println("==================================");
-        System.out.println("Cadastro Funcionário");
-        System.out.println("Digite o nome completo | campo vazio para cancelar");
-        
-        nome = input.nextLine();
-        if (validaNome(nome)){
-            System.out.println("Cancelando...");
-            return;
+    private static String validaInputNome(String nome){
+        //  return "-1" se invalido
+        //  return " " para cancerlar loop
+        //  return nome se validado
+        if (nome.equals(" ")){
+            System.out.println("ESPAÇO");
+            return " ";
         }
-
-        System.out.println("Digite o número de matrícula | campo vazio para cancelar");
-        matricula = input.nextLine();
-        if (matricula.equals(""))
-            // TODO validacao se matricula é unico
-            return;
-        System.out.println(matricula + " " + nome + " Adicionado");
-
-        Funcionario funcionarioCadastrado = new Funcionario(matricula, nome);
-        listaFuncionario.add(matricula);
-    }
-
-    private static boolean validaNome(String nome){
-        // validaNome possui lógica invertida(erro), se tudo estiver ok return False
-
-        // repetição, somente cancelar quando input zerado, enquanto usuário tentar não cancelar
-        // valida se tem numero
-        
-        if (nome.equals("")){
-            System.out.println("Cancelando...");
-            return true;
-        }        
-        
         nome = nome.trim();
+        // TODO validar se não tem número
+        
         if (! nome.contains(" ")){
             System.out.println("Inválido. Necessário preencher nome Completo");
-            return true;
+            return "-1";
+        }else{
+            return nome;
         }
-    
-        return false;
     }
+    
+    private static String validaInputMatricula(String matricula){
+        //  return "-1" se invalido
+        //  return " " para cancerlar loop
+        //  return matricula se validado
+        if (matricula.equals(" ")){
+            return " ";
+        }
+        for (Funcionario funcionario : listaFuncionario){
+            if(funcionario.getMatricula().equals(matricula)){
+                System.out.println("Inválido. Matrícula já utilizada");
+                return "-1";
+            }
+        }
+        // TODO validacao se matricula é unico
 
+        return matricula;
+    }
+    
     private static void mostraFolhaPgto(){
         // se estiver vazio mostrar zerado
 
-        for (String funcionario : listaFuncionario){
-
-            System.out.println(funcionario);
+        if (listaFuncionario.isEmpty()){
+            System.out.println("Nenhum funcionário cadastrado");
+        } else{
             
+            System.out.println("Funcionários cadastrados: "+listaFuncionario.size());
+            double totalFuncionarioPadrao=0;
+            double totalComissao=0;
+            double totalFuncionarioVendedor=0;
+            double totalProdutividade=0;
+            double totalFuncionarioOperador=0;
+            double totalFolhaPgto=0;
+
+            for (Funcionario funcionario : listaFuncionario){   
+                System.out.println("==================================");
+                System.out.println("Nome: "+funcionario.getNomeCompleto());
+                System.out.println("Matrícula: "+funcionario.getMatricula());
+                System.out.println("Salário Fixo: "+funcionario.getSalarioFixo());
+                switch (funcionario.tipo) {
+                    case "base":
+                        System.out.println("Extras: 0.00");                        
+                        System.out.println("Salario Final: "+ funcionario.getSalarioFixo());
+                        totalFuncionarioPadrao +=funcionario.getSalarioFixo();
+                        totalFolhaPgto += funcionario.getSalarioFixo();                        
+                        break;
+                    // case "vendedor":
+                    //     System.out.println("Comissão: "+String.format("%.2f", funcionario.getExtras()));
+                    //     System.out.println("Salario Final: "+ funcionario.getSalarioFinal());                        
+                    //     break;
+                    //     case "operacao":
+                    //         System.out.println("Produtividade: "+String.format("%.2f", funcionario.getExtras()));
+                    //         System.out.println("Salario Final: "+ funcionario.getSalarioFinal());                        
+                    //     break;
+                }
+            }
+            System.out.println("==================================");
+            System.out.println("Subtotal Funcionário Padrão: " + totalFuncionarioPadrao);
+            System.out.println("Total Folha Pagamento: " + totalFolhaPgto);
+            System.out.println("==================================");
+            System.out.println("==================================");
         }
     }
 
