@@ -45,9 +45,12 @@ public class App {
                             listaFuncionario.add(FuncionarioBase);
                             break;
                         case 2:
-                            System.out.println("Digite o valor total vendido: | campo vazio para cancelar");
-                            double valorVendas = input.nextDouble();
-                            
+                            double valorVendas = validaInputMoeda("Digite o valor total das Vendas: ");
+                            if (Double.isNaN(valorVendas)){
+                                System.out.println("Cancelando Cadastro...");
+                                continue;
+                            }
+
                             System.out.println("Digite a porcentagem de comissão (0~100): | campo vazio para cancelar");
                             double comissao = input.nextDouble();
                             comissao /= 100;
@@ -56,9 +59,12 @@ public class App {
                             listaFuncionario.add(FuncionarioVendas);
                             break;
                         case 3:
-                            System.out.println("Digite o unitário da peça: | campo vazio para cancelar");
-                            double valorUnitario = input.nextDouble();
-                            
+                            double valorUnitario = validaInputMoeda("Digite o unitário da peça:");
+                            if (Double.isNaN(valorUnitario)){
+                                System.out.println("Cancelando Cadastro...");
+                                continue;
+                            }
+
                             System.out.println("Digite qtd de peças produzidas: | campo vazio para cancelar");
                             int quantidadePecaProduzida = input.nextInt();
                             
@@ -189,21 +195,35 @@ public class App {
             }
             return matricula;  
         }
-        //  return "-1" se invalido
-        //  return " " para cancerlar loop
-        //  return matricula se validado
-        // if (matricula.equals(" ")){
-        //     return " ";
-        // }
-        // for (Funcionario funcionario : listaFuncionario){
-        //     if(funcionario.getMatricula().equals(matricula)){
-        //         System.out.println("Inválido. Matrícula já utilizada");
-        //         return "-1";
-        //     }
-        // }
-        // // TODO validacao se matricula é unico
+    }
 
-        // return matricula;
+    /** 
+     * 1. Se vazio retorna null (cancela operação)
+     * 2. Valida se pode ser convertido para double
+     * @param mensagem será passado no print Inicial
+     * @return moeda
+     */
+    private static double validaInputMoeda(String mensagem){
+        while (true) {
+            System.out.println(mensagem + " | 'Enter' para cancelar");
+            String moeda = input.nextLine().trim();
+
+            if (moeda.isEmpty()){
+                return Double.NaN;
+            }
+
+            try {
+                double numeroValido = Double.parseDouble(moeda);
+                return numeroValido;
+            }
+            catch(java.lang.NumberFormatException e) {
+                System.out.println("Erro. Digite somente números");
+            }
+            catch (Exception e) {
+                System.out.println("Erro Inesperado. Tente novamente: "+e);
+            }
+            
+        }
     }
     
     private static void mostraFolhaPgto(){
