@@ -13,7 +13,6 @@ public class App {
         do { 
             mostrarTelaLogin();
             sair = validaOpcaoTela1(input.nextLine());
-            // sair = 1; // TODO bypass das opções
 
             switch (sair) {
                 case 0:
@@ -27,30 +26,55 @@ public class App {
                     String matricula;
                     System.out.println("==================================");
                     System.out.println("Cadastro Funcionário");
-                    do { 
-                        System.out.println("Digite o nome completo | campo vazio para cancelar");
-                        
-                        nome = validaInputNome(input.nextLine());
-                    } while (nome.equals("-1"));
-
-                    if (nome.equals(" ")){
-                        System.out.println("Cancelando Cadastro...");
-                        continue;
-                    }
-                    do { 
-                        System.out.println("Digite o número de matrícula | campo vazio para cancelar");
-                        matricula = validaInputMatricula(input.nextLine());
-                        
-                    } while (matricula.equals("-1"));
                     
-                    if (nome.equals(" ")){
+                    nome = validaInputNome();
+                    if (nome == null){
+                        System.out.println("Cancelando Cadastro...");
+                        continue;
+                    }
+                    
+                    matricula = validaInputMatricula();
+                    if (matricula==null){
                         System.out.println("Cancelando Cadastro...");
                         continue;
                     }
 
-                    Funcionario NovoFuncionario = new Funcionario(matricula, nome);
-                    listaFuncionario.add(NovoFuncionario);
+                    switch (sair) {
+                        case 1:
+                            Funcionario FuncionarioBase = new Funcionario(matricula, nome);
+                            listaFuncionario.add(FuncionarioBase);
+                            break;
+                        case 2:
+                            double valorVendas = validaInputMoeda("Digite o valor total das Vendas: ");
+                            if (Double.isNaN(valorVendas)){
+                                System.out.println("Cancelando Cadastro...");
+                                continue;
+                            }
 
+                            System.out.println("Digite a porcentagem de comissão (0~100): | campo vazio para cancelar");
+                            double comissao = input.nextDouble();
+                            comissao /= 100;
+                            
+                            FuncionarioVendedor FuncionarioVendas = new FuncionarioVendedor(matricula, nome, valorVendas, comissao);
+                            listaFuncionario.add(FuncionarioVendas);
+                            break;
+                        case 3:
+                            double valorUnitario = validaInputMoeda("Digite o unitário da peça:");
+                            if (Double.isNaN(valorUnitario)){
+                                System.out.println("Cancelando Cadastro...");
+                                continue;
+                            }
+
+                            System.out.println("Digite qtd de peças produzidas: | campo vazio para cancelar");
+                            int quantidadePecaProduzida = input.nextInt();
+                            
+                            FuncionarioOperacao FuncionarioOperacao = new FuncionarioOperacao(matricula, nome, quantidadePecaProduzida, valorUnitario);
+                            
+                            listaFuncionario.add(FuncionarioOperacao);
+
+                            break;
+                            
+                    }
                     break;
                 case 4:
                     System.out.println("Folha pgto...");
@@ -84,41 +108,122 @@ public class App {
 
     }
 
-    private static String validaInputNome(String nome){
+    /**
+     * 1. Se vazio retorna null (cancela operação)
+     * 2. valida se é nome completo (possui espaço)
+     * 3. Valida se possui digitos
+     * @return nome (lowercase) para compação em banco de dados ArrayList
+     */
+    private static String validaInputNome(){
+        while (true) {
+            System.out.println("Digite o nome completo | 'Enter' para cancelar");
+            String nome = input.nextLine().trim();
+
+            if (nome.isEmpty()){
+                return null;
+            }
+            if (!nome.contains(" ")){
+                System.out.println("ERRO! Necessário preencher nome Completo");
+                continue;
+            }
+            boolean temNumero = false;
+            for (char c : nome.toCharArray()){
+                if (Character.isDigit(c)){
+                    temNumero = true;
+                    break;
+                }
+            }
+            if (temNumero){
+                System.out.println("ERRO! Não pode haver números");
+                continue;
+            }
+
+            return nome.toLowerCase();
+        }
         //  return "-1" se invalido
         //  return " " para cancerlar loop
         //  return nome se validado
-        if (nome.equals(" ")){
-            System.out.println("ESPAÇO");
-            return " ";
-        }
-        nome = nome.trim();
-        // TODO validar se não tem número
-        
-        if (! nome.contains(" ")){
-            System.out.println("Inválido. Necessário preencher nome Completo");
-            return "-1";
-        }else{
-            return nome;
+        // do { 
+        //     boolean erro=false;
+        //     System.out.println("Digite o nome completo | campo vazio para cancelar");
+        //     String nome = input.nextLine();
+            
+        //     if (nome.equals(" ")){
+        //         return " ";
+        //     }
+        //     if (! nome.contains(" ")){
+        //         System.out.println("Inválido. Necessário preencher nome Completo");
+        //         erro=true;
+        //     }
+        //     nome = nome.trim();
+        //     for (char c : nome.toCharArray()){
+        //         if (Character.isDigit(c)){
+        //             System.out.println("Inválido. Nome não pode conter número");
+        //             erro = true;
+        //             break;
+        //         }
+        //     }
+        //     if (erro==false)
+        //         return nome;
+        // } while(true);
+    }
+
+    /**
+     * 1. Se vazio retorna null (cancela operação)
+     * 2. Valida se a matrícula já foi cadastrada
+     * @return matricula
+     */
+    
+    private static String validaInputMatricula(){
+        while (true) {
+            System.out.println("Digite o número da Matrícula | 'Enter' para cancelar");
+            String matricula = input.nextLine().trim(); 
+
+            if (matricula.isEmpty()){
+                return null;
+            }
+            boolean repetido = false;
+            for (Funcionario funcionario : listaFuncionario){
+                if (funcionario.getMatricula().equals(matricula)){
+                    repetido = true;
+                    break;
+                }
+            }
+            if (repetido){
+                System.out.println("ERRO. Matrícula já cadastrada");
+                continue;
+            }
+            return matricula;  
         }
     }
-    
-    private static String validaInputMatricula(String matricula){
-        //  return "-1" se invalido
-        //  return " " para cancerlar loop
-        //  return matricula se validado
-        if (matricula.equals(" ")){
-            return " ";
-        }
-        for (Funcionario funcionario : listaFuncionario){
-            if(funcionario.getMatricula().equals(matricula)){
-                System.out.println("Inválido. Matrícula já utilizada");
-                return "-1";
-            }
-        }
-        // TODO validacao se matricula é unico
 
-        return matricula;
+    /** 
+     * 1. Se vazio retorna null (cancela operação)
+     * 2. Valida se pode ser convertido para double
+     * @param mensagem será passado no print Inicial
+     * @return moeda
+     */
+    private static double validaInputMoeda(String mensagem){
+        while (true) {
+            System.out.println(mensagem + " | 'Enter' para cancelar");
+            String moeda = input.nextLine().trim();
+
+            if (moeda.isEmpty()){
+                return Double.NaN;
+            }
+
+            try {
+                double numeroValido = Double.parseDouble(moeda);
+                return numeroValido;
+            }
+            catch(java.lang.NumberFormatException e) {
+                System.out.println("Erro. Digite somente números");
+            }
+            catch (Exception e) {
+                System.out.println("Erro Inesperado. Tente novamente: "+e);
+            }
+            
+        }
     }
     
     private static void mostraFolhaPgto(){
