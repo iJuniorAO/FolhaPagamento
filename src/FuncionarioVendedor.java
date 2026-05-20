@@ -1,10 +1,10 @@
 public class FuncionarioVendedor extends Funcionario{
 
         private double valorVenda;
-        private double comissao;
+        private float comissao;
         String tipo = "vendedor";
 
-    public FuncionarioVendedor(String matricula, String nome, double valorVenda, double comissao) {
+    public FuncionarioVendedor(String matricula, String nome, double valorVenda, float  comissao) {
         super(matricula, nome);
         this.valorVenda = valorVenda;
         this.comissao = comissao;
