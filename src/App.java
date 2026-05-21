@@ -43,6 +43,7 @@ public class App {
                         case 1:
                             Funcionario FuncionarioBase = new Funcionario(matricula, nome);
                             listaFuncionario.add(FuncionarioBase);
+                            System.out.println("Funcionário Cadastrado com Sucesso");
                             break;
 
                         case 2:
@@ -59,17 +60,21 @@ public class App {
                             }                           
                             FuncionarioVendedor FuncionarioVendas = new FuncionarioVendedor(matricula, nome, valorVendas, comissao);
                             listaFuncionario.add(FuncionarioVendas);
+                            System.out.println("Funcionário Cadastrado com Sucesso");
                             break;
                         
                         case 3:
-                            double valorUnitario = validaInputMoeda("Digite o unitário da peça:");
+                            double valorUnitario = validaInputMoeda("Digite o valor unitário da peça:");
                             if (Double.isNaN(valorUnitario)){
                                 System.out.println("Cancelando Cadastro...");
                                 continue;
                             }
 
-                            System.out.println("Digite qtd de peças produzidas: | campo vazio para cancelar");
-                            int quantidadePecaProduzida = input.nextInt();
+                            int quantidadePecaProduzida = validaInputInt();
+                            if (quantidadePecaProduzida==-1){
+                                System.out.println("Cancelando Cadastro");
+                                continue;
+                            }
                             
                             FuncionarioOperacao FuncionarioOperacao = new FuncionarioOperacao(matricula, nome, quantidadePecaProduzida, valorUnitario);
                             listaFuncionario.add(FuncionarioOperacao);
@@ -87,6 +92,7 @@ public class App {
             }
         
         } while (sair!=0);
+        input.close();
     }
     
     private static int validaOpcaoTela1(String textoInput){
@@ -149,7 +155,6 @@ public class App {
      * 2. Valida se a matrícula já foi cadastrada
      * @return matricula
      */
-    
     private static String validaInputMatricula(){
         while (true) {
             System.out.println("Digite o número da Matrícula | 'Enter' para cancelar");
@@ -188,6 +193,8 @@ public class App {
             if (moeda.isEmpty()){
                 return Double.NaN;
             }
+            
+            moeda = moeda.replace(",", ".");
 
             try {
                 double numeroValido = Double.parseDouble(moeda);
@@ -215,12 +222,13 @@ public class App {
      */
     private static float validaInputPorcentagem(){
         while (true) {
-            System.out.println("Digite a porcentagem de comissão (0~100) | 'Enter' para cancelar");
+            System.out.println("Digite a porcentagem de comissão | 'Enter' para cancelar");
             String porcentagemValida = input.nextLine().trim();
 
             if (porcentagemValida.isEmpty()){
                 return Float.NaN;
             }
+            porcentagemValida = porcentagemValida.replace(",", ".");
 
             try {
                 Float numeroValido = Float.parseFloat(porcentagemValida);
@@ -240,14 +248,39 @@ public class App {
             
         }
     }
+    /**
+     * 1. Vazio retorna -1
+     * 2. Valida se pode ser convertido para inteiro
+     * 3. Valida se é negativo
+     * @return qtProduzida
+     */
+    private static int validaInputInt(){
+        while (true) {
+            System.out.println("Digite quantidade de peças produzidas | 'Enter' para cancelar");
+            String qtProduzida = input.nextLine().trim();
+    
+            if (qtProduzida.isEmpty()){
+                return -1;
+            }
+            try {
+                Integer numeroValido = Integer.parseInt(qtProduzida);
+    
+                if (numeroValido<0){
+                    System.out.println("ERRO. Não pode existir quantidade produzida negativa");
+                    continue;
+                }
+                return numeroValido;
+            }
+            catch(java.lang.NumberFormatException e) {
+                System.out.println("Erro. Digite somente números inteiros");
+            }
+            catch (Exception e) {
+                System.out.println("Erro Inesperado. Tente novamente: "+e);
+            }
+            
+        }
 
-
-
-
-
-
-
-
+    }
 
 
 
@@ -270,27 +303,39 @@ public class App {
                 System.out.println("==================================");
                 System.out.println("Nome: "+funcionario.getNomeCompleto());
                 System.out.println("Matrícula: "+funcionario.getMatricula());
-                System.out.println("Salário Fixo: "+funcionario.getSalarioFixo());
+                System.out.println("Salário Fixo: "+String.format("%,.2f", funcionario.getSalarioFixo()));
                 switch (funcionario.tipo) {
                     case "base":
-                        System.out.println("Extras: 0.00");                        
-                        System.out.println("Salario Final: "+ funcionario.getSalarioFixo());
+                        System.out.println("Extras: 0.00"); 
+                        System.out.println("Salario Final: "+ String.format("%,.2f", funcionario.getSalarioFixo()));
                         totalFuncionarioPadrao +=funcionario.getSalarioFixo();
-                        totalFolhaPgto += funcionario.getSalarioFixo();                        
+                        System.out.println("----------------------------------");
                         break;
-                    // case "vendedor":
-                    //     System.out.println("Comissão: "+String.format("%.2f", funcionario.getExtras()));
-                    //     System.out.println("Salario Final: "+ funcionario.getSalarioFinal());                        
-                    //     break;
-                    //     case "operacao":
-                    //         System.out.println("Produtividade: "+String.format("%.2f", funcionario.getExtras()));
-                    //         System.out.println("Salario Final: "+ funcionario.getSalarioFinal());                        
-                    //     break;
+                    case "vendedor":
+                        System.out.println("Comissão: " + String.format("%,.2f", funcionario.getExtras()));
+                        System.out.println("Salario Final: "+ String.format("%,.2f", funcionario.getSalarioFinal()));
+                        totalComissao += funcionario.getExtras();
+                        totalFuncionarioVendedor += funcionario.getSalarioFinal();                        
+                        break;
+                    case "operacao":
+                        System.out.println("Produtividade: " + String.format("%,.2f", funcionario.getExtras()));
+                        System.out.println("Salario Final: "+ String.format("%,.2f", funcionario.getSalarioFinal()));
+                        totalProdutividade += funcionario.getExtras();
+                        totalFuncionarioOperador += funcionario.getSalarioFinal();                        
+                        break;
+
                 }
             }
+            totalFolhaPgto = totalFuncionarioPadrao + totalFuncionarioVendedor + totalFuncionarioOperador;
             System.out.println("==================================");
-            System.out.println("Subtotal Funcionário Padrão: " + totalFuncionarioPadrao);
-            System.out.println("Total Folha Pagamento: " + totalFolhaPgto);
+            System.out.println("Total Comissão: " + String.format("%,.2f", totalComissao));
+            System.out.println("Total Produtividade: " + String.format("%,.2f", totalProdutividade));
+
+            System.out.println("Subtotal Funcionário Padrão: " + String.format("%,.2f", totalFuncionarioPadrao));
+            System.out.println("Subtotal Funcionário Vendedor: " + String.format("%,.2f", totalFuncionarioVendedor));
+            System.out.println("Subtotal Funcionário Operador: " + String.format("%,.2f", totalFuncionarioOperador));
+            System.out.println("Total Folha Pagamento: " + String.format("%,.2f", totalFolhaPgto));
+            
             System.out.println("==================================");
             System.out.println("==================================");
         }
@@ -301,7 +346,7 @@ public class App {
         System.out.println("FOLHA DE PAGAMENTO");
         System.out.println("==================================");
         System.out.println("Digite uma das opções abaixo: ");
-        System.out.println("1. Cadastrar funcionário");
+        System.out.println("1. Cadastrar funcionário padrão");
         System.out.println("2. Cadastrar funcionário vendedor");
         System.out.println("3. Cadastrar funcionário operação");
         System.out.println("4. Verificar folha de pagamento");

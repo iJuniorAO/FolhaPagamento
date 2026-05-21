@@ -2,12 +2,12 @@ public class FuncionarioOperacao extends Funcionario{
 
         private int qtdePecas;
         private double valorPeca;
-        String tipo = "operacao";
 
     public FuncionarioOperacao(String matricula, String nome, int qtdePecas, double valorPeca) {
         super(matricula, nome);
         this.qtdePecas = qtdePecas;
         this.valorPeca = valorPeca;
+        this.tipo = "operacao";
     }
 
     public double getExtras(){
