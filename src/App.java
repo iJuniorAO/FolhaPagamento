@@ -320,8 +320,7 @@ public class App {
             double totalFolhaPgto=0;
             
             
-            System.out.printf("\n
-            =====================================================================================\n");
+            System.out.printf("\n=====================================================================================\n");
             System.out.printf("| %-26s %-54s |\n", "Funcionários Cadastrados: ",listaFuncionario.size());
             System.out.printf("=====================================================================================\n");
             // System.out.println("| Funcionários cadastrados: "+listaFuncionario.size()+"\n");
