@@ -7,7 +7,7 @@ public class FuncionarioOperacao extends Funcionario{
         super(matricula, nome);
         this.qtdePecas = qtdePecas;
         this.valorPeca = valorPeca;
-        this.tipo = "operacao";
+        this.tipo = "PROD";
     }
 
     public double getExtras(){
