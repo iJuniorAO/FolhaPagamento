@@ -1,13 +1,13 @@
 public class FuncionarioVendedor extends Funcionario{
 
         private double valorVenda;
-        private double comissao;
-        String tipo = "vendedor";
+        private float comissao;
 
-    public FuncionarioVendedor(String matricula, String nome, double valorVenda, double comissao) {
+    public FuncionarioVendedor(String matricula, String nome, double valorVenda, float  comissao) {
         super(matricula, nome);
         this.valorVenda = valorVenda;
         this.comissao = comissao;
+        this.tipo = "vendedor";
     }
 
     public double getExtras(){

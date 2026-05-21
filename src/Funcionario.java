@@ -23,5 +23,13 @@ public class Funcionario {
     }   
     public String getTipo(){
         return this.tipo;
-    }   
+    }
+
+    // metodos nas childClass
+    public double getExtras(){
+        return 0.0;
+    }
+    public double getSalarioFinal(){
+        return 0.0;
+    } 
 }
