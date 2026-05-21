@@ -320,75 +320,53 @@ public class App {
             double totalFolhaPgto=0;
             
             
-            System.out.printf("\n=====================================================================================\n");
-            System.out.printf("| %-26s %-54s |\n", "Funcionários Cadastrados: ",listaFuncionario.size());
-            System.out.printf("=====================================================================================\n");
+            System.out.printf("\n===========================================================================================\n");
+            System.out.printf("| %-26s %-60s |\n", "Funcionários Cadastrados: ",listaFuncionario.size());
+            System.out.printf("===========================================================================================\n");
             // System.out.println("| Funcionários cadastrados: "+listaFuncionario.size()+"\n");
             System.out.printf(
-                "| %-20s | %-10s | %-13s |  %-12s | %-13s |\n",
-                "Nome Completo", "Matrícula", "Salário Fixo", "Bônus", "Salário Final"
+                "| %-20s | %-10s (%4s)| %-13s |  %-12s | %-13s |\n",
+                "Nome Completo", "Matrícula", "TIPO", "Salário Fixo", "Bônus", "Salário Final"
             );
-            System.out.printf("|----------------------|------------|---------------|---------------|---------------|\n");
+            System.out.printf("|----------------------|------------------|---------------|---------------|---------------|\n");
 
             for (Funcionario funcionario : listaFuncionario){   
-
+                System.out.printf(
+                    "| %-20s | %-10s (%4s)| R$ %-10.2f | R$ %-10.2f | R$ %10.2f | \n",
+                    funcionario.getNomeCompleto(),
+                    funcionario.getMatricula(),
+                    funcionario.getTipo(),
+                    funcionario.getSalarioFixo(),
+                    funcionario.getExtras(),
+                    funcionario.getSalarioFinal()
+                );
+                
                 switch (funcionario.tipo) {
-                    case "base":
-                        System.out.printf(
-                            "| %-20s | %-10s | R$ %-10.2f | R$ %-10.2f | R$ %10.2f | \n",
-                            funcionario.getNomeCompleto(),
-                            funcionario.getMatricula(),
-                            funcionario.getSalarioFixo(),
-                            funcionario.getExtras(),
-                            funcionario.getSalarioFinal()
-                        );
-
+                    case "PADR":
                         totalFuncionarioPadrao +=funcionario.getSalarioFixo();
                         break;
-                        
-                    case "vendedor":
-                        
-                        System.out.printf(
-                            "| %-20s | %-10s | R$ %-10.2f | R$ %-10.2f | R$ %10.2f | \n",
-                            funcionario.getNomeCompleto(),
-                            funcionario.getMatricula(),
-                            funcionario.getSalarioFixo(),
-                            funcionario.getExtras(),
-                            funcionario.getSalarioFinal()
-                        );
-                        
+                    case "VEND":
                         totalComissao += funcionario.getExtras();
                         totalFuncionarioVendedor += funcionario.getSalarioFinal();                        
                         break;
                         
-                    case "operacao":
-                        System.out.printf(
-                            "| %-20s | %-10s | R$ %-10.2f | R$ %-10.2f | R$ %10.2f | \n",
-                            funcionario.getNomeCompleto(),
-                            funcionario.getMatricula(),
-                            funcionario.getSalarioFixo(),
-                            funcionario.getExtras(),
-                            funcionario.getSalarioFinal()
-                        );
-
+                    case "PROD":
                         totalProdutividade += funcionario.getExtras();
                         totalFuncionarioOperador += funcionario.getSalarioFinal();                        
                         break;
-
                 }
             }
             totalFolhaPgto = totalFuncionarioPadrao + totalFuncionarioVendedor + totalFuncionarioOperador;
-            System.out.printf("-------------------------------------------------------------------------------------\n");
+            System.out.printf("-------------------------------------------------------------------------------------------\n");
             
-            System.out.printf("| %-30s %39s %,10.2f | \n", "Subtotal Comissão:", "R$",totalComissao);
-            System.out.printf("| %-30s %39s %,10.2f | \n", "Subtotal Produtividade:", "R$",totalProdutividade);
-            
-            System.out.printf("| %-30s %39s %,10.2f | \n", "Subtotal Funcionário Padrão:", "R$",totalFuncionarioPadrao);
-            System.out.printf("| %-30s %39s %,10.2f | \n", "Subtotal Funcionário Vendedor:", "R$",totalFuncionarioVendedor);
-            System.out.printf("| %-30s %39s %,10.2f | \n", "Subtotal Funcionário Operador:", "R$",totalFuncionarioOperador);
-            System.out.printf("=====================================================================================\n");
-            System.out.printf("| %-30s %39s %,10.2f | \n", "Total Folha de Pagamento: ", "R$",totalFolhaPgto);            
-            System.out.printf("=====================================================================================\n");
+            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Subtotal Comissão:",totalComissao/totalFolhaPgto*100, "R$",totalComissao);
+            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Subtotal Produtividade:",totalProdutividade/totalFolhaPgto*100, "R$",totalProdutividade);
+            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Subtotal Funcionário Padrão:",totalFuncionarioPadrao/totalFolhaPgto*100, "R$",totalFuncionarioPadrao);
+            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Subtotal Funcionário Vendedor:",totalFuncionarioVendedor/totalFolhaPgto*100, "R$",totalFuncionarioVendedor);
+            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Subtotal Funcionário Operador:",totalFuncionarioOperador/totalFolhaPgto*100, "R$",totalFuncionarioOperador);
+            System.out.printf("===========================================================================================\n");
+            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Total Folha de Pagamento: ",totalFolhaPgto/totalFolhaPgto*100, "R$",totalFolhaPgto);            
+            System.out.printf("===========================================================================================\n");
         }
     }
 

@@ -3,7 +3,7 @@ public class Funcionario {
     private String matricula;
     private String nomeCompleto;
     private double SalarioBase = 2_000;
-    String tipo = "base";
+    String tipo = "PADR";
 
 
     public Funcionario(String matricula, String nomeCompleto) {
