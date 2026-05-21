@@ -10,26 +10,27 @@ public class App {
 
     public static void main(String[] args) throws Exception {
 
-        // testes
-        if (true){
+        // FeatureFlag de testes
+        // Quando iniciado ele irá istanciar 2 objetos para cada tipo de Funcionário
+        if (false){
 
-            Funcionario f = new Funcionario("1234","Ismael Junior");
+            Funcionario f = new Funcionario("123456","Ismael Junior");
             listaFuncionario.add(f);
     
-            FuncionarioVendedor v = new FuncionarioVendedor("714852", "Lucas Silva", 1680.65, 0.1f);
+            FuncionarioVendedor v = new FuncionarioVendedor("654321", "Fulano Henrique", 1680.65, 0.1f);
             listaFuncionario.add(v);
     
-            FuncionarioOperacao o = new FuncionarioOperacao("14563654", "Pedro Henrique", 1400, 0.15);
+            FuncionarioOperacao o = new FuncionarioOperacao("123789", "Ciclano Alves", 1400, 0.15);
             listaFuncionario.add(o);
             
             
-            Funcionario f2 = new Funcionario("4321","Algusto Galego");
+            Funcionario f2 = new Funcionario("123987","Qualquer Nome");
             listaFuncionario.add(f2);
             
-            FuncionarioVendedor v2 = new FuncionarioVendedor("951789", "Maicon Jaquison", 5320.51, 0.5f);
+            FuncionarioVendedor v2 = new FuncionarioVendedor("741258", "Alguem Silva", 5320.51, 0.5f);
             listaFuncionario.add(v2);
             
-            FuncionarioOperacao o2 = new FuncionarioOperacao("9846513", "Flavius Marcus", 1150, 0.13);
+            FuncionarioOperacao o2 = new FuncionarioOperacao("963258", "Desenvolvedor Java", 1150, 0.13);
             listaFuncionario.add(o2);
         }
 
@@ -47,7 +48,7 @@ public class App {
                 case 3:
                     String nome;
                     String matricula;
-                    System.out.println("==================================");
+                    System.out.println("=".repeat(91));
                     System.out.println("Cadastro Funcionário");
                     
                     nome = validaInputNome();
@@ -309,7 +310,10 @@ public class App {
         // se estiver vazio mostrar zerado
 
         if (listaFuncionario.isEmpty()){
-            System.out.println("Nenhum funcionário cadastrado");
+            System.out.printf("=".repeat(91));
+            System.out.printf("\n| "+" ".repeat(29)+"Nenhum Funcionário Cadastrado"+" ".repeat(29)+" |\n");
+            // System.out.println("Nenhum funcionário cadastrado");
+            System.out.println("=".repeat(91));
         } else{
             
             double totalFuncionarioPadrao=0;
@@ -332,7 +336,7 @@ public class App {
 
             for (Funcionario funcionario : listaFuncionario){   
                 System.out.printf(
-                    "| %-20s | %-10s (%4s)| R$ %-10.2f | R$ %-10.2f | R$ %10.2f | \n",
+                    "| %-20s | %-10s (%4s)| R$ %-,10.2f | R$ %-,10.2f | R$ %,10.2f | \n",
                     funcionario.getNomeCompleto(),
                     funcionario.getMatricula(),
                     funcionario.getTipo(),
