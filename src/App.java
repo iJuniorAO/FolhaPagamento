@@ -253,7 +253,7 @@ public class App {
             porcentagemValida = porcentagemValida.replace(",", ".");
 
             try {
-                Float numeroValido = Float.parseFloat(porcentagemValida);
+                float numeroValido = Float.parseFloat(porcentagemValida);
 
                 if (numeroValido<0){
                     System.out.println("ERRO. Não pode existir comissão negativa");
@@ -285,7 +285,7 @@ public class App {
                 return -1;
             }
             try {
-                Integer numeroValido = Integer.parseInt(qtProduzida);
+                int numeroValido = Integer.parseInt(qtProduzida);
     
                 if (numeroValido<0){
                     System.out.println("ERRO. Não pode existir quantidade produzida negativa");
@@ -317,7 +317,7 @@ public class App {
             double totalFuncionarioVendedor=0;
             double totalProdutividade=0;
             double totalFuncionarioOperador=0;
-            double totalFolhaPgto=0;
+            double totalFolhaPgto;
             
             
             System.out.printf("\n===========================================================================================\n");
