@@ -369,16 +369,16 @@ public class App {
             System.out.printf("===========================================================================================\n");
         }
     }
-
+    
     private static void mostrarTelaLogin(){
-        System.out.println("==================================");
-        System.out.println("FOLHA DE PAGAMENTO");
-        System.out.println("==================================");
-        System.out.println("Digite uma das opções abaixo: ");
-        System.out.println("1. Cadastrar funcionário padrão");
-        System.out.println("2. Cadastrar funcionário vendedor");
-        System.out.println("3. Cadastrar funcionário operação");
-        System.out.println("4. Verificar folha de pagamento");
-        System.out.println("0. Sair");
+        System.out.printf("===========================================================================================\n");
+        System.out.printf("|%31s %s %30s|\n", "", "SISTEMA FOLHA DE PAGAMENTO", "");
+        System.out.printf("+-----------------------------------------------------------------------------------------+\n");
+        System.out.printf("| %-87s |\n","1. Cadastrar Funcionário Padrão");
+        System.out.printf("| %-87s |\n","2. Cadastrar Funcionário Vendedor");
+        System.out.printf("| %-87s |\n","3. Cadastrar Funcionário Operação");
+        System.out.printf("| %-87s |\n","4. Verificar Folha de Pagamento");
+        System.out.printf("| %-87s |\n","0. Sair");
+        System.out.printf("===========================================================================================\n");
     }
 }
