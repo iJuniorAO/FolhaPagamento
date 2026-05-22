@@ -1,4 +1,6 @@
 .vscode/
+.ignore/
+out/
 lib
 bin/
 README copy.md

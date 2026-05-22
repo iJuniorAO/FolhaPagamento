@@ -1,3 +1,6 @@
+package model;
+
+
 public class FuncionarioOperacao extends Funcionario{
 
         private int qtdePecas;

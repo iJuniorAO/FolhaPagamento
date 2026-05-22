@@ -1,6 +1,10 @@
 
+import factory.Seeder;
 import java.util.ArrayList;
 import java.util.Scanner;
+import model.Funcionario;
+import model.FuncionarioOperacao;
+import model.FuncionarioVendedor;
 
 public class App {
 
@@ -8,58 +12,41 @@ public class App {
     static int sair = -1;
     static Scanner input = new Scanner(System.in);
 
+    // caso true instancia clases para testes
+    static boolean SEEDER_FUNCIONARIO = false;
+
     public static void main(String[] args) throws Exception {
 
-        // FeatureFlag de testes
-        // Quando iniciado ele irá istanciar 2 objetos para cada tipo de Funcionário
-        if (false){
-
-            Funcionario f = new Funcionario("123456","Ismael Junior");
-            listaFuncionario.add(f);
-    
-            FuncionarioVendedor v = new FuncionarioVendedor("654321", "Fulano Henrique", 1680.65, 0.1f);
-            listaFuncionario.add(v);
-    
-            FuncionarioOperacao o = new FuncionarioOperacao("123789", "Ciclano Alves", 1400, 0.15);
-            listaFuncionario.add(o);
-            
-            
-            Funcionario f2 = new Funcionario("123987","Qualquer Nome");
-            listaFuncionario.add(f2);
-            
-            FuncionarioVendedor v2 = new FuncionarioVendedor("741258", "Alguem Silva", 5320.51, 0.5f);
-            listaFuncionario.add(v2);
-            
-            FuncionarioOperacao o2 = new FuncionarioOperacao("963258", "Desenvolvedor Java", 1150, 0.13);
-            listaFuncionario.add(o2);
+        if (SEEDER_FUNCIONARIO){
+            System.out.println("\nInserido dados teste...");
+            Seeder.carregarDadosDemonstracao(listaFuncionario);
         }
 
         do { 
-            mostrarTelaLogin();
+            Tela.MostrarOpcoes();
             sair = validaOpcaoTela1(input.nextLine());
 
             switch (sair) {
                 case 0:
                     sair=0;
-                    System.out.println("Finalizando...");
+                    Tela.MostrarAlerta("Finalizando...");
                     break;
                 case 1:
                 case 2:
                 case 3:
                     String nome;
                     String matricula;
-                    System.out.println("=".repeat(91));
-                    System.out.println("Cadastro Funcionário");
+                    
                     
                     nome = validaInputNome();
                     if (nome == null){
-                        System.out.println("Cancelando Cadastro...");
+                        Tela.MostrarAlerta("Cancelando Cadastro");
                         continue;
                     }
                     
                     matricula = validaInputMatricula();
                     if (matricula==null){
-                        System.out.println("Cancelando Cadastro...");
+                        Tela.MostrarAlerta("Cancelando Cadastro");
                         continue;
                     }
 
@@ -67,36 +54,36 @@ public class App {
                         case 1:
                             Funcionario FuncionarioBase = new Funcionario(matricula, nome);
                             listaFuncionario.add(FuncionarioBase);
-                            System.out.println("Funcionário Cadastrado com Sucesso");
+                            Tela.MostrarAlerta("Funcionario Cadastrado com Sucesso");
                             break;
 
                         case 2:
                             double valorVendas = validaInputMoeda("Digite o valor total das Vendas: ");
                             if (Double.isNaN(valorVendas)){
-                                System.out.println("Cancelando Cadastro...");
+                                Tela.MostrarAlerta("Cancelando Cadastro");
                                 continue;
                             }
                             
                             float comissao = validaInputPorcentagem();
                             if (Float.isNaN(comissao)){
-                                System.out.println("Cancelando Cadastro...");
+                                Tela.MostrarAlerta("Cancelando Cadastro");
                                 continue;    
                             }                           
                             FuncionarioVendedor FuncionarioVendas = new FuncionarioVendedor(matricula, nome, valorVendas, comissao);
                             listaFuncionario.add(FuncionarioVendas);
-                            System.out.println("Funcionário Cadastrado com Sucesso");
+                            Tela.MostrarAlerta("Funcionario Cadastrado com Sucesso");
                             break;
                         
                         case 3:
                             double valorUnitario = validaInputMoeda("Digite o valor unitário da peça:");
                             if (Double.isNaN(valorUnitario)){
-                                System.out.println("Cancelando Cadastro...");
+                                Tela.MostrarAlerta("Cancelando Cadastro");
                                 continue;
                             }
 
                             int quantidadePecaProduzida = validaInputInt();
                             if (quantidadePecaProduzida==-1){
-                                System.out.println("Cancelando Cadastro");
+                                Tela.MostrarAlerta("Cancelando Cadastro");
                                 continue;
                             }
                             
@@ -108,7 +95,46 @@ public class App {
                     }
                     break;
                 case 4:
-                    mostraFolhaPgto();
+                    if (listaFuncionario.isEmpty()){
+                        Tela.GeraFolhaZeroFuncionario();
+                    }else{
+                        Tela.GeraFolhaHeader(listaFuncionario.size());
+
+                        double totalFuncionarioPadrao=0;
+                        double totalComissao=0;
+                        double totalFuncionarioVendedor=0;
+                        double totalProdutividade=0;
+                        double totalFuncionarioOperador=0;
+                        double totalFolhaPgto;
+
+                        for (Funcionario funcionario : listaFuncionario){
+
+                            Tela.GeraFolhaBody(
+                                funcionario.getNomeCompleto(),
+                                funcionario.getMatricula(),
+                                funcionario.getTipo(),
+                                funcionario.getSalarioFixo(),
+                                funcionario.getExtras(),
+                                funcionario.getSalarioFinal());
+                
+                            switch (funcionario.getTipo()) {
+                                case "PADR":
+                                    totalFuncionarioPadrao +=funcionario.getSalarioFixo();
+                                    break;
+                                case "VEND":
+                                    totalComissao += funcionario.getExtras();
+                                    totalFuncionarioVendedor += funcionario.getSalarioFinal();                        
+                                    break;
+                                    
+                                case "PROD":
+                                    totalProdutividade += funcionario.getExtras();
+                                    totalFuncionarioOperador += funcionario.getSalarioFinal();                        
+                                    break;
+                            }   
+                        }
+                        totalFolhaPgto = totalFuncionarioPadrao + totalFuncionarioVendedor + totalFuncionarioOperador;
+                        Tela.GeraFolhaFooter(totalComissao, totalProdutividade, totalFuncionarioPadrao, totalFuncionarioVendedor, totalFuncionarioOperador, totalFolhaPgto);
+                    }
                     break;
                 case -1:
                 default:                    
@@ -118,22 +144,26 @@ public class App {
         input.close();
     }
     
+    /**
+     * 1. Valida se é inteiro (somente números)
+     * 2. Valida se está entre 0~4
+     * @param textoInput
+     * @return numero válido
+     */
     private static int validaOpcaoTela1(String textoInput){
-        // caso erro retorna -1
-        // validado returna input
         try {
             int numeroValido = Integer.parseInt(textoInput);
             if ((numeroValido<0) || (numeroValido>=5)){
-                System.out.println("Opção inválida. Digite somente números de 0 a 4");
+                Tela.MostrarErro("Opção inválida. Digite somente números de 0 a 4");
                 return -1;
             }
             return numeroValido;
         }catch(java.lang.NumberFormatException e) {
-            System.out.println("Erro. Digite somente números");
+            Tela.MostrarErro("Digite somente números");
             return -1;
 
         } catch (Exception e) {
-            System.out.println("Erro Inesperado. Tente novamente: "+e);
+            Tela.MostrarErro("Erro Inesperado. Tente novamente: ");
             return -1;
         }
 
@@ -147,14 +177,14 @@ public class App {
      */
     private static String validaInputNome(){
         while (true) {
-            System.out.println("Digite o nome completo | 'Enter' para cancelar");
+            Tela.MostrarHeader("Digite o nome completo | 'Enter' para cancelar");
             String nome = input.nextLine().trim();
 
             if (nome.isEmpty()){
                 return null;
             }
             if (!nome.contains(" ")){
-                System.out.println("ERRO! Necessário preencher nome Completo");
+                Tela.MostrarErro("Necessário preencher nome completo");
                 continue;
             }
             boolean temNumero = false;
@@ -165,7 +195,7 @@ public class App {
                 }
             }
             if (temNumero){
-                System.out.println("ERRO! Não pode haver números");
+                Tela.MostrarErro("Não pode haver números");
                 continue;
             }
 
@@ -180,7 +210,8 @@ public class App {
      */
     private static String validaInputMatricula(){
         while (true) {
-            System.out.println("Digite o número da Matrícula | 'Enter' para cancelar");
+
+            Tela.MostrarSubheader("Digite o número da matrícula | 'Enter' para cancelar");
             String matricula = input.nextLine().trim(); 
 
             if (matricula.isEmpty()){
@@ -194,7 +225,7 @@ public class App {
                 }
             }
             if (repetido){
-                System.out.println("ERRO. Matrícula já cadastrada");
+                Tela.MostrarErro("Matrícula já cadastrada");
                 continue;
             }
             return matricula;  
@@ -210,7 +241,7 @@ public class App {
      */
     private static double validaInputMoeda(String mensagem){
         while (true) {
-            System.out.println(mensagem + " | 'Enter' para cancelar");
+            Tela.MostrarSubheader(mensagem + " | 'Enter' para cancelar");
             String moeda = input.nextLine().trim();
 
             if (moeda.isEmpty()){
@@ -222,16 +253,16 @@ public class App {
             try {
                 double numeroValido = Double.parseDouble(moeda);
                 if (numeroValido<0){
-                    System.out.println("ERRO. Valor negativo");
+                    Tela.MostrarErro("Valor Negativo");
                     continue;
                 }
                 return numeroValido;
             }
             catch(java.lang.NumberFormatException e) {
-                System.out.println("Erro. Digite somente números");
+                Tela.MostrarErro("Digite somente números");
             }
             catch (Exception e) {
-                System.out.println("Erro Inesperado. Tente novamente: "+e);
+                Tela.MostrarErro("Erro inesperado. Tente novamente");
             }
             
         }
@@ -245,7 +276,7 @@ public class App {
      */
     private static float validaInputPorcentagem(){
         while (true) {
-            System.out.println("Digite a porcentagem de comissão | 'Enter' para cancelar");
+            Tela.MostrarSubheader("Digite a porcentagem de comissão | 'Enter' para cancelar");
             String porcentagemValida = input.nextLine().trim();
 
             if (porcentagemValida.isEmpty()){
@@ -257,16 +288,16 @@ public class App {
                 float numeroValido = Float.parseFloat(porcentagemValida);
 
                 if (numeroValido<0){
-                    System.out.println("ERRO. Não pode existir comissão negativa");
+                    Tela.MostrarErro("Não pode existir comissão negativa");
                     continue;
                 }
                 return numeroValido/100;
             }
             catch(java.lang.NumberFormatException e) {
-                System.out.println("Erro. Digite somente números");
+                Tela.MostrarErro("Digite somente números");
             }
             catch (Exception e) {
-                System.out.println("Erro Inesperado. Tente novamente: "+e);
+                Tela.MostrarErro("Erro inesperado. Tente novamente");
             }
             
         }
@@ -279,7 +310,7 @@ public class App {
      */
     private static int validaInputInt(){
         while (true) {
-            System.out.println("Digite quantidade de peças produzidas | 'Enter' para cancelar");
+            Tela.MostrarSubheader("Digite quantidade de peças produzidas | 'Enter' para cancelar");
             String qtProduzida = input.nextLine().trim();
     
             if (qtProduzida.isEmpty()){
@@ -289,16 +320,16 @@ public class App {
                 int numeroValido = Integer.parseInt(qtProduzida);
     
                 if (numeroValido<0){
-                    System.out.println("ERRO. Não pode existir quantidade produzida negativa");
+                    Tela.MostrarErro("Não pode existir quantidade produzida negativa");
                     continue;
                 }
                 return numeroValido;
             }
             catch(java.lang.NumberFormatException e) {
-                System.out.println("Erro. Digite somente números inteiros");
+                Tela.MostrarErro("Erro. Digite somente números inteiros");
             }
             catch (Exception e) {
-                System.out.println("Erro Inesperado. Tente novamente: "+e);
+                Tela.MostrarErro("Erro Inesperado. Tente novamente: ");
             }
             
         }
@@ -306,83 +337,4 @@ public class App {
     }
 
 
-    private static void mostraFolhaPgto(){
-        // se estiver vazio mostrar zerado
-
-        if (listaFuncionario.isEmpty()){
-            System.out.printf("=".repeat(91));
-            System.out.printf("\n| "+" ".repeat(29)+"Nenhum Funcionário Cadastrado"+" ".repeat(29)+" |\n");
-            // System.out.println("Nenhum funcionário cadastrado");
-            System.out.println("=".repeat(91));
-        } else{
-            
-            double totalFuncionarioPadrao=0;
-            double totalComissao=0;
-            double totalFuncionarioVendedor=0;
-            double totalProdutividade=0;
-            double totalFuncionarioOperador=0;
-            double totalFolhaPgto;
-            
-            
-            System.out.printf("\n===========================================================================================\n");
-            System.out.printf("| %-26s %-60s |\n", "Funcionários Cadastrados: ",listaFuncionario.size());
-            System.out.printf("===========================================================================================\n");
-            // System.out.println("| Funcionários cadastrados: "+listaFuncionario.size()+"\n");
-            System.out.printf(
-                "| %-20s | %-10s (%4s)| %-13s |  %-12s | %-13s |\n",
-                "Nome Completo", "Matrícula", "TIPO", "Salário Fixo", "Bônus", "Salário Final"
-            );
-            System.out.printf("|----------------------|------------------|---------------|---------------|---------------|\n");
-
-            for (Funcionario funcionario : listaFuncionario){   
-                System.out.printf(
-                    "| %-20s | %-10s (%4s)| R$ %-,10.2f | R$ %-,10.2f | R$ %,10.2f | \n",
-                    funcionario.getNomeCompleto(),
-                    funcionario.getMatricula(),
-                    funcionario.getTipo(),
-                    funcionario.getSalarioFixo(),
-                    funcionario.getExtras(),
-                    funcionario.getSalarioFinal()
-                );
-                
-                switch (funcionario.tipo) {
-                    case "PADR":
-                        totalFuncionarioPadrao +=funcionario.getSalarioFixo();
-                        break;
-                    case "VEND":
-                        totalComissao += funcionario.getExtras();
-                        totalFuncionarioVendedor += funcionario.getSalarioFinal();                        
-                        break;
-                        
-                    case "PROD":
-                        totalProdutividade += funcionario.getExtras();
-                        totalFuncionarioOperador += funcionario.getSalarioFinal();                        
-                        break;
-                }
-            }
-            totalFolhaPgto = totalFuncionarioPadrao + totalFuncionarioVendedor + totalFuncionarioOperador;
-            System.out.printf("-------------------------------------------------------------------------------------------\n");
-            
-            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Subtotal Comissão:",totalComissao/totalFolhaPgto*100, "R$",totalComissao);
-            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Subtotal Produtividade:",totalProdutividade/totalFolhaPgto*100, "R$",totalProdutividade);
-            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Subtotal Funcionário Padrão:",totalFuncionarioPadrao/totalFolhaPgto*100, "R$",totalFuncionarioPadrao);
-            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Subtotal Funcionário Vendedor:",totalFuncionarioVendedor/totalFolhaPgto*100, "R$",totalFuncionarioVendedor);
-            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Subtotal Funcionário Operador:",totalFuncionarioOperador/totalFolhaPgto*100, "R$",totalFuncionarioOperador);
-            System.out.printf("===========================================================================================\n");
-            System.out.printf("| %-58s %6.2f %% %8s %,10.2f | \n", "Total Folha de Pagamento: ",totalFolhaPgto/totalFolhaPgto*100, "R$",totalFolhaPgto);            
-            System.out.printf("===========================================================================================\n");
-        }
-    }
-    
-    private static void mostrarTelaLogin(){
-        System.out.printf("===========================================================================================\n");
-        System.out.printf("|%31s %s %30s|\n", "", "SISTEMA FOLHA DE PAGAMENTO", "");
-        System.out.printf("+-----------------------------------------------------------------------------------------+\n");
-        System.out.printf("| %-87s |\n","1. Cadastrar Funcionário Padrão");
-        System.out.printf("| %-87s |\n","2. Cadastrar Funcionário Vendedor");
-        System.out.printf("| %-87s |\n","3. Cadastrar Funcionário Operação");
-        System.out.printf("| %-87s |\n","4. Verificar Folha de Pagamento");
-        System.out.printf("| %-87s |\n","0. Sair");
-        System.out.printf("===========================================================================================\n");
-    }
 }
