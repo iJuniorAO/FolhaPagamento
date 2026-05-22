@@ -1,3 +1,5 @@
+package model;
+
 public class FuncionarioVendedor extends Funcionario{
 
         private double valorVenda;
